@@ -1,5 +1,7 @@
 # VOC_Plume_Meta-analysis_with_Python
-This is a python script I have written to read and parse a large groundwater quality database (tens of thousands of wells, with hundreds of thousands of sample events) into individual groundwater plumes, subject to subsequent spatial analyses to develop a simple set of plume metrics. A more detailed description and some example results are provided in my blog: (link coming shortly).
+This is a python script I have written to read and parse a large groundwater quality database (tens of thousands of wells, with hundreds of thousands of sample events) into individual groundwater plumes, subject to subsequent spatial analyses to develop a simple set of plume metrics. A more detailed description and some example results are provided in my blog:
+
+https://numericalenvironmental.wordpress.com/2017/04/17/meta-analysis-of-over-1000-groundwater-chlorinated-hydrocarbon-plumes-using-python-tools/
 
 The required python 2.7-compatible libraries required to run this script include:
 * numpy
