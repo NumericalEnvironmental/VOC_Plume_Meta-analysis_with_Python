@@ -1,0 +1,7 @@
+gama_edf_kern.txt
+gama_edf_kings.txt
+gama_edf_tulare.txt
+gama_edf_fresno.txt
+gama_edf_monterey.txt
+gama_edf_sanbenito.txt
+gama_edf_sanluisobispo.txt
