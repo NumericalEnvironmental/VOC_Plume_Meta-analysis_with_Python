@@ -2,7 +2,7 @@
 
 ![Preview](https://numericalenvironmental.files.wordpress.com/2017/04/cal_general_map.jpeg?w=655&h=463)
 
-This is a python script I have written to read and parse a large groundwater quality database (tens of thousands of wells, with hundreds of thousands of sample events) into individual groundwater plumes, subject to subsequent spatial analyses to develop a simple set of plume metrics. A more detailed description and some example results are provided in my blog:
+This is a python script I have written to read and parse a large groundwater quality database (thousands of wells, with hundreds of thousands of sample events) into individual groundwater plumes, subject to subsequent spatial analyses to develop a simple set of plume metrics. A more detailed description and some example results are provided in my blog:
 
 https://numericalenvironmental.wordpress.com/2017/04/17/meta-analysis-of-over-1000-groundwater-chlorinated-hydrocarbon-plumes-using-python-tools/
 
@@ -16,7 +16,7 @@ The required python 2.7-compatible libraries required to run this script include
 
 In addition, the following input files are needed:
 
-* gama_df.csv: a comma-delimited text file which is an already-produced extraction of chlorinated volatile organic compound (CVOC) data from California’s Groundwater Ambient Monitoring and Assessment (GAMA) database, if this option is selected when the code is run. Otherwise, tab-delimited text files for complete data from all 50+ California counties is required (several GB worth of data, so not provided here). If this latter option is selected, the gama_DF.csv file will be created automatically for subsequent runs.
+* gama_df.csv: a comma-delimited text file which is an already-produced extraction of chlorinated volatile organic compound (CVOC) data from California’s Groundwater Ambient Monitoring and Assessment (GAMA) database, if this option is selected when the code is run. Otherwise, tab-delimited text files for complete data from all 50+ California counties is required (several GB worth of data, so not provided here). If this latter option is selected, the gama_df.csv file will be created automatically for subsequent runs.
 
 * analytes.txt: a text file listing the CVOCs of interest to read from the database (naming must be consistent with what is used in GAMA).
 
