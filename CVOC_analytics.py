@@ -210,6 +210,10 @@ def Process_gama(read_opt):
     headings = ['WELL NAME', 'APPROXIMATE LATITUDE', 'APPROXIMATE LONGITUDE', 'DATE', 'DATASET', 'COUNTY']          # for dataframe processing
     min_wells = 5                                   # minimum number of monitoring wells to qualify a site
     phi = 0.25                                      # aquifer porosity (universal)
+    start_date = '01-01-2000'
+    end_date = '01-01-2020'
+    min_date = to_datetime(start_date)
+    max_date = to_datetime(end_date)
 
     if not read_opt:        # read GAMA data sets
         for i, data_file in enumerate(data_files):              # extract GAMA data from multiple county data files
@@ -222,11 +226,16 @@ def Process_gama(read_opt):
     else:                                           # read summary data file
         print 'Reading combined data file'
         gama_df = read_csv('gama_df.csv', sep=',')
+        gama_df['DATE'] = to_datetime(gama_df['DATE'])                # format dates
+
+    # filter date window
+    gama_df = gama_df[(gama_df['DATE']>=min_date)]
+    gama_df = gama_df[(gama_df['DATE']<=max_date)]
 
     # parse sites with DBSCAN cluster analysis
     print 'Performing DBSCAN to parse sites ...'
     X = gama_df[['APPROXIMATE LATITUDE', 'APPROXIMATE LONGITUDE']].values
-    dbscan_analysis = DBSCAN(eps=0.002, min_samples=5)                          # eps = 0.002 degree seems to work (min distance between clsuter wells) ...
+    dbscan_analysis = DBSCAN(eps=0.00075, min_samples=5)                          # eps = 0.002 degree seems to work (min distance between clsuter wells) ...
     cluster = dbscan_analysis.fit_predict(X)                                                
     gama_df['cluster'] = cluster
     cluster_array = arange(0, cluster.max()+1)
@@ -300,7 +309,7 @@ def Process_gama(read_opt):
     larger_sites_df = site_summary.summary_df[site_summary.summary_df['tot_area']>=1.0]
     data_set = [larger_sites_df['well_density']]
     bins = linspace(0., 50., num=31, endpoint=True)   
-    Histogram(data_set, bins, 'Well density (no. of wells/hectare)', ['well density'], 'well_density.png', fit=stats.expon)
+    Histogram(data_set, bins, 'Well density (no. of wells/hectare)', ['well density'], 'well_density.png', fit=stats.gamma)
 
     # (4a) 1,1-DCE versus 1,1,1-TCA max concs, per site where both are present (example)
     x_col = 'TCA111_maxC'
@@ -316,13 +325,40 @@ def Process_gama(read_opt):
     df = df[(df[x_col]>0.) & (df[y_col]>0.)]    
     ScatterPlot(log10(df), x_col, y_col, 'PCE max conc. (log ug/L)', '11-DCA max conc. (log ug/L)', 'DCA11_vs_PCE.png')
 
-    # (5) PCE mass versus no. of wells, per site (example)
+    # (5a) no. of wells versus PCE max concs, per site (example)
+    x_col = 'PCE_maxC'
+    y_col = 'num_wells'
+    df = site_summary.summary_df[[x_col, y_col]]
+    df = df[df[x_col]>0.]    
+    ScatterPlot(log10(df), x_col, y_col, 'PCE max conc. (log ug/L)', 'No. of wells (log)', 'num_wells vs PCE_maxC.png')
+    
+    # (5b) PCE mass versus no. of wells, per site (example)
     x_col = 'num_wells'
     y_col = 'PCE_mass_L'
     df = site_summary.summary_df[[x_col, y_col]]
     df = df[df[y_col]>0.]    
     ScatterPlot(log10(df), x_col, y_col, 'No. of wells (log)', 'PCE mass (log kg/m)', 'PCE_mass vs wells.png', hexplot='hex')
-  
+    
+    # (6a) 1,4-dioxane versus 1,1,1-TCA mass per unit depth
+    x_col = 'TCA111_mass_L'
+    y_col = 'DIOXANE14_mass_L'
+    df = site_summary.summary_df[[x_col, y_col]]
+    df = df[(df[x_col]>0.) & (df[y_col]>0.)]    
+    ScatterPlot(log10(df), x_col, y_col, '1,1,1-TCA mass (log kg/m)', '1,4-dioxane mass (log kg/m)', 'dioxane_vs_TCA.png')
+   
+    # (6b) 1,4-dioxane versus 1,1-DCE mass per unit depth
+    x_col = 'DCE11_mass_L'
+    y_col = 'DIOXANE14_mass_L'
+    df = site_summary.summary_df[[x_col, y_col]]
+    df = df[(df[x_col]>1e-6) & (df[y_col]>1e-6)]    
+    ScatterPlot(log10(df), x_col, y_col, '1,1-DCE mass (log kg/m)', '1,4-dioxane mass (log kg/m)', 'dioxane_vs_DCE11.png')
+    
+    # (6c) 1,4-dioxane versus TCE mass per unit depth
+    x_col = 'PCE_mass_L'
+    y_col = 'DIOXANE14_mass_L'
+    df = site_summary.summary_df[[x_col, y_col]]
+    df = df[(df[x_col]>0.) & (df[y_col]>0.)]    
+    ScatterPlot(log10(df), x_col, y_col, 'PCE mass (log kg/m)', '1,4-dioxane mass (log kg/m)', 'dioxane_vs_PCE.png')
     
     print 'Done.'
 
